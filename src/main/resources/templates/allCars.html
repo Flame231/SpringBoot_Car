@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Список всех автомобилей</title>
+</head>
+<body>
+
+<table border="2">
+    <thead>
+    <td>Id</td>
+    <td>Название</td>
+    <td>Тип</td>
+    <td>Действия</td>
+    </thead>
+    <tr th:each="car:${carsList}">
+        <td th:text="${car.getId()}"></td>
+        <td th:text="${car.getName()}"></td>
+        <td th:text="${car.getType()}"></td>
+        <td>
+            <form method="get" th:action="@{/car}">
+                <input type="hidden" name="updateId" th:value="${car.getId()}">
+                <input type="submit" value="Изменить">
+            </form>
+            <form method="post" th:action="@{/deleteCar}">
+                <input type="hidden" name="id" th:value="${car.getId()}">
+                <input type="submit" value="Удалить">
+            </form>
+        </td>
+    </tr>
+</table>
+
+<form method="get" action="/car">
+    Введите id авто:
+    <input type="text" name="id">
+    <input type="submit" value="Найти">
+</form>
+<th:block th:if="${foundCar}">
+    <label >Результат поиска:</label>
+    <br>
+    <label>Id:</label>
+    <span th:text="${foundCar.getId()}"></span>
+    <br>
+    <label>Название:</label>
+    <span th:text="${foundCar.getName()}"></span>
+    <br>
+    <label>Тип:</label>
+    <span th:text="${foundCar.getType()}"></span>
+</th:block>
+
+<form method="post" action="/saveCar">
+    <label>
+        Имя:
+        <input type="text" name="name">
+    </label>
+    <label>
+        Тип:
+        <input type="text" name="type">
+    </label>
+    <input type="submit" value="Сохранить">
+</form>
+</body>

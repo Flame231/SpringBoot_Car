@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260613-01" author="Flame231">
+        <createTable tableName="car">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date_time" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="update_date_time" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <sql>
+            INSERT INTO car (name, type, create_date_time, update_date_time)
+            VALUES ('Tesla Model S', 'Electric', NOW(), NOW()),
+                   ('BMW M5', 'Sedan', NOW(), NOW()),
+                   ('Audi Q7', 'SUV', NOW(), NOW()),
+                   ('Toyota Camry', 'Sedan', NOW(), NOW()),
+                   ('Porsche 911', 'Sports', NOW(), NOW()),
+                   ('Ford Mustang', 'Coupe', NOW(), NOW()),
+                   ('Mercedes-Benz G-Class', 'SUV', NOW(), NOW()),
+                   ('Hyundai Tucson', 'Crossover', NOW(), NOW()),
+                   ('Nissan Leaf', 'Hatchback', NOW(), NOW()),
+                   ('Chevrolet Corvette', 'Sports', NOW(), NOW());
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

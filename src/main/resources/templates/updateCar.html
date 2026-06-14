@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Редактировать автомобиль</title>
+</head>
+<body>
+<label>Редактировать автомобиль</label>
+<form method="post" th:action="@{/saveChangesCar}">
+        <input name="id" type="hidden" th:value="${car.getId()}">
+    <br>
+    <label>
+        Название:
+        <input name="name" type="text" th:value="${car.getName()}">
+    </label>
+    <br>
+    <label>
+        Тип:
+        <input name="type" type="text" th:value="${car.getType()}">
+    </label>
+    <input type="submit" th:value="Сохранить">
+</form>
+</body>
