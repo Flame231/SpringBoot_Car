@@ -17,9 +17,6 @@ import java.util.List;
 public class CarController {
     private final CarServiceImpl carService;
 
-    @Value("${error.message}")
-    private String ErrorMessage;
-
     public CarController(CarServiceImpl carService) {
         this.carService = carService;
     }
@@ -35,13 +32,6 @@ public class CarController {
         Car foundCar = carService.findCar(id);
         redirectAttributes.addFlashAttribute("foundCar", foundCar);
         return "redirect:/allCars";
-    }
-
-    @GetMapping("/allCars")
-    public String getAllCars(Model model) {
-        List<CarDTO> carsList = carService.findAllCars();
-        model.addAttribute("carsList", carsList);
-        return "allCars";
     }
 
     @RequestMapping(value = "/saveCar", method = RequestMethod.POST)
@@ -61,6 +51,13 @@ public class CarController {
         System.out.println(carDTO.toString());
         carService.updateCar(carDTO);
         return "redirect:/allCars";
+    }
+
+    @GetMapping("/allCars")
+    public String getAllCars(Model model) {
+        List<CarDTO> carsList = carService.findAllCars();
+        model.addAttribute("carsList", carsList);
+        return "allCars";
     }
 
 }

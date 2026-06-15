@@ -2,6 +2,7 @@ package org.example.springboot_car.service;
 
 import org.example.springboot_car.dto.CarConverterDTO;
 import org.example.springboot_car.dto.CarDTO;
+import org.example.springboot_car.exceptions.ResourceNotFoundException;
 import org.example.springboot_car.model.Car;
 import org.springframework.stereotype.Service;
 import org.example.springboot_car.repository.CarRepository;
@@ -19,8 +20,15 @@ public class CarServiceImpl {
         this.carConvertDTO = carConvertDTO;
     }
 
-    public void saveCar(CarDTO carDTO) {
-        carRepository.save(carConvertDTO.toEntity(carDTO));
+    public Car saveCar(CarDTO carDTO) {
+        return carRepository.save(carConvertDTO.toEntity(carDTO));
+    }
+
+    public Car findCar(Long id) {
+        if(!carRepository.existsById(id)){
+            throw new ResourceNotFoundException("Машина с id " + id + " не существует");
+        }
+        return carRepository.findById(id).get();
     }
 
     public void updateCar(CarDTO carDTO) {
@@ -30,13 +38,10 @@ public class CarServiceImpl {
         carRepository.save(car);
     }
 
-    public Car findCar(Long id) {
-        return carRepository.findById(id).orElse(new Car());
-    }
-
     public void deleteCar(Long id) {
         carRepository.deleteById(id);
     }
+
 
     public List<CarDTO> findAllCars() {
         return carRepository.findAll().stream().map(carConvertDTO::toDTO).toList();
