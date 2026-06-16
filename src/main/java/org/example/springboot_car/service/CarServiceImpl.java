@@ -20,15 +20,15 @@ public class CarServiceImpl {
         this.carConvertDTO = carConvertDTO;
     }
 
-    public Car saveCar(CarDTO carDTO) {
-        return carRepository.save(carConvertDTO.toEntity(carDTO));
+    public void saveCar(CarDTO carDTO) {
+       carRepository.save(carConvertDTO.toEntity(carDTO));
     }
 
-    public Car findCar(Long id) {
+    public CarDTO findCar(Long id) {
         if(!carRepository.existsById(id)){
             throw new ResourceNotFoundException("Машина с id " + id + " не существует");
         }
-        return carRepository.findById(id).get();
+        return carConvertDTO.toDTO(carRepository.findById(id).get());
     }
 
     public void updateCar(CarDTO carDTO) {
@@ -42,11 +42,7 @@ public class CarServiceImpl {
         carRepository.deleteById(id);
     }
 
-
     public List<CarDTO> findAllCars() {
         return carRepository.findAll().stream().map(carConvertDTO::toDTO).toList();
-
     }
-
-
 }

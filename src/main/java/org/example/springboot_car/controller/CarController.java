@@ -25,11 +25,11 @@ public class CarController {
     public String getCar(Model model, @RequestParam(name = "id", required = false) Long id,
                          @RequestParam(name = "updateId", required = false) Long updateId, RedirectAttributes redirectAttributes) {
         if (updateId != null) {
-            Car foundCar = carService.findCar(updateId);
+            CarDTO foundCar = carService.findCar(updateId);
             model.addAttribute("car", foundCar);
             return "updateCar";
         }
-        Car foundCar = carService.findCar(id);
+        CarDTO foundCar = carService.findCar(id);
         redirectAttributes.addFlashAttribute("foundCar", foundCar);
         return "redirect:/allCars";
     }
@@ -48,15 +48,14 @@ public class CarController {
 
     @PostMapping(value = "/saveChangesCar")
     public String saveChangesCar(@ModelAttribute CarDTO carDTO) {
-        System.out.println(carDTO.toString());
         carService.updateCar(carDTO);
         return "redirect:/allCars";
     }
 
     @GetMapping("/allCars")
     public String getAllCars(Model model) {
-        List<CarDTO> carsList = carService.findAllCars();
-        model.addAttribute("carsList", carsList);
+        List<CarDTO> carDTOList = carService.findAllCars();
+        model.addAttribute("carsList", carDTOList);
         return "allCars";
     }
 

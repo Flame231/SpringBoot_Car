@@ -2,25 +2,22 @@ package org.example.springboot_car;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.example.springboot_car.dto.CarConverterDTO;
 import org.example.springboot_car.dto.CarDTO;
 import org.example.springboot_car.exceptions.ResourceNotFoundException;
 import org.example.springboot_car.model.Car;
 import org.example.springboot_car.repository.CarRepository;
 import org.example.springboot_car.service.CarServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Transactional
 @SpringBootTest
 class ServiceTest {
 
@@ -30,28 +27,24 @@ class ServiceTest {
     private CarRepository carRepository;
     @Autowired
     private EntityManager entityManager;
-    @Autowired
-    CarConverterDTO carConverterDTO;
 
-    @BeforeEach
-    void clearAll(){
-        carRepository.deleteAll();
-    }
 
     @Test
     void shouldSaveCar() {
         CarDTO carDTO = CarDTO.builder().name("testName").type("testType").build();
-        Car carCreated = carService.saveCar(carDTO);
-        Car carFound = carRepository.findById(carCreated.getId()).orElse(null);
-        assertThat(carFound).usingRecursiveComparison().ignoringFieldsOfTypes(Timestamp.class).isEqualTo(carCreated);
+        carService.saveCar(carDTO);
+        Car carFound = carRepository.findByName(carDTO.getName());
+        assertNotNull(carFound);
+        assertNotNull(carFound.getId());
+        assertEquals(carFound.getName(),carDTO.getName());
     }
-
     @Test
     void shouldFindCar() {
         CarDTO carDTO = CarDTO.builder().name("testName").type("testType").build();
-        Car car = carService.saveCar(carDTO);
-        assertThat(carService.findCar(car.getId())).usingRecursiveComparison()
-                .ignoringFieldsOfTypes(Timestamp.class).isEqualTo(carRepository.findById(car.getId()).get());
+        carService.saveCar(carDTO);
+        Car carFound = carRepository.findByName(carDTO.getName());
+        assertThat(carService.findCar(carFound.getId())).usingRecursiveComparison()
+                .ignoringFieldsOfTypes(Timestamp.class).isEqualTo(carRepository.findById(carFound.getId()).get());
     }
 
     @Test
@@ -62,27 +55,28 @@ class ServiceTest {
     @Test
     void shouldUpdateCar() {
         CarDTO carDTO = CarDTO.builder().name("testName").type("testType").build();
-        Car car = carService.saveCar(carDTO);
+        carService.saveCar(carDTO);
+        Car carFound = carRepository.findByName(carDTO.getName());
         String name = "updateTestName";
-        entityManager.clear();
-        carService.updateCar(CarDTO.builder().id(car.getId()).name(name).type(car.getType()).build());
-        assertEquals(name, carRepository.findById(car.getId()).get().getName());
-    }
-
-    @Test
-    @Transactional
-    void shouldDeleteCar() {
-        CarDTO carDTO = CarDTO.builder().name("testName").type("testType").build();
-        Car car = carService.saveCar(carDTO);
-        carService.deleteCar(car.getId());
         entityManager.flush();
         entityManager.clear();
-        assertTrue(carRepository.findById(car.getId()).isEmpty());
+        carService.updateCar(CarDTO.builder().id(carFound.getId()).name(name).type(carFound.getType()).build());
+        assertEquals(name, carRepository.findById(carFound.getId()).get().getName());
     }
 
     @Test
-    @Transactional
-    void ShouldFindAllCars() {
+    void shouldDeleteCar() {
+        CarDTO carDTO = CarDTO.builder().name("testName").type("testType").build();
+        carService.saveCar(carDTO);
+        Car carFound = carRepository.findByName(carDTO.getName());
+        carService.deleteCar(carFound.getId());
+        entityManager.flush();
+        entityManager.clear();
+        assertTrue(carRepository.findById(carFound.getId()).isEmpty());
+    }
+
+    @Test
+    void shouldFindAllCars() {
         CarDTO carDTO1 = CarDTO.builder().name("testName1").type("testType1").build();
         CarDTO carDTO2 = CarDTO.builder().name("testName2").type("testType2").build();
         CarDTO carDTO3 = CarDTO.builder().name("testName3").type("testType3").build();
