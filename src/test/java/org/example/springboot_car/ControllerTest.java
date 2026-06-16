@@ -62,7 +62,7 @@ public class ControllerTest {
         long id = 12;
         CarDTO carDTO = CarDTO.builder().id(id).name("TestName").type("TestType").build();
         doReturn(carDTO).when(carService).findCar(id);
-        assertEquals("updateCar", controller.getCar(model, id, id, redirectAttributes));
+        assertEquals("updateCar", controller.getCar(model, null, id, redirectAttributes));
         verify(carService, times(1)).findCar(id);
         verify(model,times(1)).addAttribute("car", carDTO);
     }
